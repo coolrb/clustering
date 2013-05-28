@@ -10,34 +10,55 @@
 			}
 		</style>
 
-		<script src="data.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+
 		<script type="text/javascript">
-			// var articleData = [];
-			// var dimension = [];
-			var scale = 1;
-			var height = 600;
+			//var articleData = [];
+			//var dimension = [];
+			var height = 300;
+			var beginy = 20;
+			var showLines = false;
+			var gap = 25;
 			function initData()
 			{
+				var d = 100;
+				var n = 20;
+				for (var i = 0; i < n; i++) {
+					articleData[i] = {};
+					articleData[i].vector = [];
+					articleData[i].name = "xxx";
+					articleData[i].type = Math.floor(Math.random()*20);
+					for(var j = 0; j < d; j++)
+					{
+						articleData[i].vector[j] = Math.random() * 20;
+					}
+				};
+				for(var i = 0; i < d; i++)
+				{
+					dimension[i] = {};
+					dimension[i].max = Math.ceil(Math.random() * 20) + 1;
+					dimension[i].name = "yyy";
+				}
 				initSvg();
 			}
 			function  getx (i) {
-				return i * 20 * scale + 10;
+				return i * gap + 10;
 			}
 			function getColor(t){
 				var c = d3.hsl( 255 / 20 * articleData[t].type, 0.8, 0.4).rgb(); 
 				return "rgb("+ c.r +","+ c.g +","+ c.b +")" ;
 			}
 			function initSvg () {
-				d3.select("svg").style("height", "" + (20 * dimension.length + 30) + "px").style("width",""+(height+90)+"px");
+				d3.select("svg").style("width", "" + (gap * dimension.length + 50) + "px").style("height",""+(height+120)+"px");
 				d3.select("#axis").selectAll("line").data(dimension).enter()
 					.append("g")
 					.attr("class", "lines")
 					.append("line")
-					.attr("x1", 50)
-					.attr("y1", function(d,i){ return getx(i);})
-					.attr("x2", height + 50)
-					.attr("y2", function(d,i){ return getx(i);})
-					.style("stroke", "rgb(100,100,100)")
+					.attr("y1", beginy)
+					.attr("x1", function(d,i){ return getx(i);})
+					.attr("y2", height + beginy)
+					.attr("x2", function(d,i){ return getx(i);})
+					.style("stroke", "rgb(50,50,50)")
 					.style("stroke-width", "1")
 					;
 				d3.selectAll(".lines")
@@ -45,16 +66,27 @@
 					.attr("class", "line-text")
 					.append("text")
 					.text(function (d) {return d.name;})
-					.attr("x", 0)
-					.attr("y", function(d,i){ return getx(i) + 5;})
+					.attr("y", height+beginy+10)
+					.attr("x", function(d,i){ return getx(i) - 5;})
 					.attr("font-family", "Verdana")
 					.attr("font-size", "15")
-					//.attr("transform", function (d,i) {return "rotate(90 " + (height + 10) + " " + (getx(i) - 5) +")"})
+					.attr("transform", function (d,i) {return "rotate(90 " + (getx(i) - 5) + " " + (height+beginy+10) +")"})
+					;
+
+				d3.selectAll(".lines")
+					.append("text")
+					.text(function (d) {return Math.ceil(d.max);})
+					.attr("y", 10)
+					.attr("x", function(d,i){ return getx(i) - 8;})
+					.attr("font-family", "Verdana")
+					.attr("font-size", "10")
+					//.attr("transform", function (d,i) {return "rotate(90 " + (getx(i) - 5) + " " + (0) +")"})
 					;
 				//*
 				d3.select("#graph").selectAll(".group").data(articleData).enter()
 					.append("g")
 					.attr("class", "group")
+					.style("opacity", 0)
 					.attr("id", function(d,i){return "g"+i;})
 					.append("g")
 					.attr("id", function(d,i){return "vector" + i;})
@@ -62,13 +94,13 @@
 					.attr("id", function(d,i){return "v"+i;})
 					.attr("points", function (d, i) {
 						var str = "";
-						for (var i = 0; i < d.vector.length; i++) {
-							str = str + (height / 20 * d.vector[i] + 50) + "," + getx(i) + " "
+						for (var j = 0; j < d.vector.length; j++) {
+							str = str + getx(j) + "," + (height - height / dimension[j].max * d.vector[j] + beginy) + " "
 						};
 						return str;
 					})
 					.attr("stroke", function(d,i){return getColor(i);})
-					.attr("stroke-width", 2)
+					.attr("stroke-width", 1)
 					.attr("fill", "none")
 					.style("opacity", 0)
 					;
@@ -79,13 +111,14 @@
 					.attr("class", ".circle")
 					.append("circle")
 					.attr("info", t)
-					.attr("cx", function(d,i){return height / 20 * d + 50;})
-					.attr("cy", function(d,i){return getx(i);})
+					.attr("cy", function(d,i){return height - height / dimension[i].max * d + beginy;})
+					.attr("cx", function(d,i){return getx(i);})
 					.attr("r", 3)
 					.attr("stroke", "none")
 					.attr("fill", function(d,i){ return getColor(t); })
-					.on("mouseover", function(d,i){ t = this.getAttribute("info"); d3.select("#v"+t).style("opacity", 1) })
-					.on("mouseout", function(d,i){ t = this.getAttribute("info"); d3.select("#v"+t).style("opacity", 0) })
+					.attr("name", function(d,i){ return articleData[t].name;})
+					.on("mouseover", function(d,i){ var name = this.getAttribute("name");d3.select("#name-over").text(name); })
+					//.on("mouseout", function(d,i){ t = this.getAttribute("info"); d3.select("#v"+t).style("opacity", 0) })
 					;
 
 
@@ -96,33 +129,50 @@
 				d3.select("#buttons").selectAll("button").data(tmpArr).enter()
 					.append("button")
 					.text(function(d,i){return "G " + i;})
-					.attr("onclick", function(d,i){return "show(" + i +")";})
+					.attr("onclick", function(d,i){return "show(" + (i+1) +")";})
+
+				d3.select("#buttons").append("button")
+					.text("switch lines")
+					.attr("onclick", "switchLines();");
+				show(1);
 			}
+
+			function switchLines(){
+				if (showLines) {
+					d3.selectAll("polyline").style("opacity", 0);
+				}else{
+					d3.selectAll("polyline").style("opacity", 1);
+				}
+				showLines = !showLines;
+			}
+
 			function show(index)
 			{
-				if(index != 20)
+				if(index != 21)
 				{
-					for (var i = 0; i < 20; i++) {
-						d3.select("#g"+i).style("opacity", 0);
+					d3.selectAll(".group").style("opacity", 0);
+
+					for (var i = 0; i < articleData.length; i++) {
+						if(articleData[i].type == index)
+							d3.select("#g"+i).style("opacity", 1).select("#vector"+i).style("opacity", 1);	
 					};
-					d3.select("#g"+index).style("opacity", 1);	
+
 				}
 				else
 				{
-					for (var i = 0; i < 20; i++) {
-						d3.select("#g"+i).style("opacity", 1);
-					};
+					d3.selectAll(".group").style("opacity", 1);
 				}
 				
 			}
 		</script>
 	<head>
 
-	<body onload = "initData();">
+	<body onload = "initSvg();">
 		<svg style = "width:1340px; height:600px;" id = "svg">
 			<g id = "axis"></g>
 			<g id = "graph"></g>
 		</svg>
 		<div id = "buttons"></div>
+		<div>current article id: <div id = "name-over"></div></div>
 	</body>
 </html>
