@@ -1,0 +1,9 @@
+*.~
+*.py[oc]
+\#*\#
+
+kmeans/kmeans
+kmeans/result
+mapred/vector_map
+spider/news
+

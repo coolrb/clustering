@@ -1,0 +1,145 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>算法演示</title>
+		<script src="d3.v3.min.js" charset="utf-8"></script>
+		<style type="text/css">
+			.vector:hover
+			{
+				opacity: 255;
+			}
+		</style>
+
+		<script type="text/javascript">
+			var articleData = [];
+			var dimension = [];
+			var scale = 1;
+			var height = 600;
+			function initData()
+			{
+				var d = 100;
+				var n = 20;
+				for (var i = 0; i < n; i++) {
+					articleData[i] = {};
+					articleData[i].vector = [];
+					articleData[i].name = "xxx";
+					articleData[i].type = Math.floor(Math.random()*20);
+					for(var j = 0; j < d; j++)
+					{
+						articleData[i].vector[j] = Math.random() * 20;
+					}
+				};
+				for(var i = 0; i < d; i++)
+				{
+					dimension[i] = {};
+					dimension[i].max = Math.ceil(Math.random() * 20) + 1;
+					dimension[i].name = "k" + i;
+				}
+				initSvg();
+			}
+			function  getx (i) {
+				return i * 20 * scale + 10;
+			}
+			function getColor(t){
+				var c = d3.hsl( 255 / 20 * articleData[t].type, 0.8, 0.4).rgb(); 
+				return "rgb("+ c.r +","+ c.g +","+ c.b +")" ;
+			}
+			function initSvg () {
+				d3.select("svg").style("height", "" + (20 * dimension.length + 30) + "px").style("width",""+(height+90)+"px");
+				d3.select("#axis").selectAll("line").data(dimension).enter()
+					.append("g")
+					.attr("class", "lines")
+					.append("line")
+					.attr("x1", 50)
+					.attr("y1", function(d,i){ return getx(i);})
+					.attr("x2", height + 50)
+					.attr("y2", function(d,i){ return getx(i);})
+					.style("stroke", "rgb(100,100,100)")
+					.style("stroke-width", "1")
+					;
+				d3.selectAll(".lines")
+					.append("g")
+					.attr("class", "line-text")
+					.append("text")
+					.text(function (d) {return d.name;})
+					.attr("x", 0)
+					.attr("y", function(d,i){ return getx(i) + 5;})
+					.attr("font-family", "Verdana")
+					.attr("font-size", "15")
+					//.attr("transform", function (d,i) {return "rotate(90 " + (height + 10) + " " + (getx(i) - 5) +")"})
+					;
+				//*
+				d3.select("#graph").selectAll(".group").data(articleData).enter()
+					.append("g")
+					.attr("class", "group")
+					.attr("id", function(d,i){return "g"+i;})
+					.append("g")
+					.attr("id", function(d,i){return "vector" + i;})
+					.append("polyline")
+					.attr("id", function(d,i){return "v"+i;})
+					.attr("points", function (d, i) {
+						var str = "";
+						for (var i = 0; i < d.vector.length; i++) {
+							str = str + (height / 20 * d.vector[i] + 50) + "," + getx(i) + " "
+						};
+						return str;
+					})
+					.attr("stroke", function(d,i){return getColor(i);})
+					.attr("stroke-width", 2)
+					.attr("fill", "none")
+					.style("opacity", 0)
+					;
+				//*/
+				for(var t = 0; t < articleData.length; t++)
+					d3.select("#g"+t).append("g").attr("id", "circle"+t).selectAll(".circle").data(articleData[t].vector).enter()
+					.append("g")
+					.attr("class", ".circle")
+					.append("circle")
+					.attr("info", t)
+					.attr("cx", function(d,i){return height / 20 * d + 50;})
+					.attr("cy", function(d,i){return getx(i);})
+					.attr("r", 3)
+					.attr("stroke", "none")
+					.attr("fill", function(d,i){ return getColor(t); })
+					.on("mouseover", function(d,i){ t = this.getAttribute("info"); d3.select("#v"+t).style("opacity", 1) })
+					.on("mouseout", function(d,i){ t = this.getAttribute("info"); d3.select("#v"+t).style("opacity", 0) })
+					;
+
+
+				var tmpArr = [];
+				for (var i = 0; i < 21; i++) {
+					tmpArr[i] = i;
+				};
+				d3.select("#buttons").selectAll("button").data(tmpArr).enter()
+					.append("button")
+					.text(function(d,i){return "G " + i;})
+					.attr("onclick", function(d,i){return "show(" + i +")";})
+			}
+			function show(index)
+			{
+				if(index != 20)
+				{
+					for (var i = 0; i < 20; i++) {
+						d3.select("#g"+i).style("opacity", 0);
+					};
+					d3.select("#g"+index).style("opacity", 1);	
+				}
+				else
+				{
+					for (var i = 0; i < 20; i++) {
+						d3.select("#g"+i).style("opacity", 1);
+					};
+				}
+				
+			}
+		</script>
+	<head>
+
+	<body onload = "initData();">
+		<svg style = "width:1340px; height:600px;" id = "svg">
+			<g id = "axis"></g>
+			<g id = "graph"></g>
+		</svg>
+		<div id = "buttons"></div>
+	</body>
+</html>
