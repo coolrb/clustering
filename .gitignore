@@ -6,4 +6,6 @@ kmeans/kmeans
 kmeans/result
 mapred/vector_map
 spider/all_news.txt
+chart/data
+chart/data.js
 

@@ -62,7 +62,8 @@ function chart {
     echo "start chart .."
     cd $CHARTDIR
     cf ${KMEANSDIR}/result
-    cat ${KMEANSDIR}/result | awk -f formatjs.awk > data.js
+    awk -f format.awk ${SPIDERDIR}/all_news.txt  ${KMEANSDIR}/result > data
+    awk -f formatjs.awk ${SPIDERDIR}/all_news.txt  ${KMEANSDIR}/result> data.js
 }
 
 env_checker
