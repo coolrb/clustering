@@ -10,31 +10,14 @@
 			}
 		</style>
 
+		<script src="data.js"></script>
 		<script type="text/javascript">
-			var articleData = [];
-			var dimension = [];
+			// var articleData = [];
+			// var dimension = [];
 			var scale = 1;
 			var height = 600;
 			function initData()
 			{
-				var d = 100;
-				var n = 20;
-				for (var i = 0; i < n; i++) {
-					articleData[i] = {};
-					articleData[i].vector = [];
-					articleData[i].name = "xxx";
-					articleData[i].type = Math.floor(Math.random()*20);
-					for(var j = 0; j < d; j++)
-					{
-						articleData[i].vector[j] = Math.random() * 20;
-					}
-				};
-				for(var i = 0; i < d; i++)
-				{
-					dimension[i] = {};
-					dimension[i].max = Math.ceil(Math.random() * 20) + 1;
-					dimension[i].name = "k" + i;
-				}
 				initSvg();
 			}
 			function  getx (i) {

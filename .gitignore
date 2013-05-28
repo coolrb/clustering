@@ -5,5 +5,5 @@
 kmeans/kmeans
 kmeans/result
 mapred/vector_map
-spider/news
+spider/all_news.txt
 

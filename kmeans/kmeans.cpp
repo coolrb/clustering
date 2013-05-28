@@ -46,6 +46,7 @@ bool getInput(char fileName[]) {
     if (!myFile) return false;
     string vt, id;
     getline(myFile, vt);
+    cout << vt << endl;
     while (getline(myFile, vt)) {
         istringstream sin(vt);
         Page x;
@@ -109,19 +110,19 @@ void findMeans(Page *means, const vector<Page> cluster[K]) {
 
 void print(const vector<Page> cluster[K]) {
     for (int i = 0; i < K; ++i) {
-        printf("Cluster %d:\n", i + 1);
+        printf("Cluster %d\n", i + 1);
         for (int j = 0; j < SZ(cluster[i]); ++j) {
             Page res = cluster[i][j];
-            cout << "PageId " << res.id << " (";
+            cout << "PageId " << res.id << " ";
             if (!SZ(res.features)) {
-                printf(")\n");
+                printf("\n");
                 continue;
             }
             for (int k = 0; k < SZ(res.features); ++k) {
                 if (k) printf(",");
                 printf("%.10lf", res.features[k]);
             }
-            printf(")\n");
+            printf("\n");
         }
         puts("");
     }

@@ -27,6 +27,7 @@ function env_checker {
     java -version 2>&1 | grep 1.7 > /dev/null || q "java version >= 1.7 needed"
     python --version 2>&1 | grep 2.7 > /dev/null || q "python version >= 2.7 needed"
     g++ --version | grep "4\." > /dev/null || q "g++ version >= 4.2 needed"
+    awk --version 2>&1 > /dev/null || q "awk needed"
 }
 
 # spider by Chao Peng
@@ -41,8 +42,8 @@ function spider {
 function mapred {
     echo "start mapreduce ..."
     cd $MAPREDDIR
-    cf ${SPIDERDIR}/news
-    cat ${SPIDERDIR}/news | python mapper.py | python reducer.py > vector_map
+    cf ${SPIDERDIR}/all_news.txt
+    cat ${SPIDERDIR}/all_news.txt | python mapper.py | python reducer.py > vector_map
     c "mapred run error"
 }
 
@@ -60,9 +61,12 @@ function kmeans {
 function chart {
     echo "start chart .."
     cd $CHARTDIR
+    cf ${KMEANSDIR}/result
+    cat ${KMEANSDIR}/result | awk -f formatjs.awk > data.js
 }
 
 env_checker
-# spider
+spider
 mapred
 kmeans
+chart
