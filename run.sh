@@ -34,7 +34,7 @@ function env_checker {
 function spider {
     echo "start spider ..."
     cd $SPIDERDIR
-    java -jar Spider.jar
+    java -jar Spider.jar 2>&1 > /dev/null
     c "spider run error"
 }
 
