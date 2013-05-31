@@ -67,7 +67,7 @@ function chart {
 }
 
 env_checker
-spider
+#spider
 mapred
 kmeans
 chart
